@@ -17,46 +17,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase MyDatabase) {
-        MyDatabase.execSQL("create Table users(email TEXT primary key, password TEXT)");
+        MyDatabase.execSQL("CREATE TABLE users(email TEXT PRIMARY KEY, password TEXT, firstName TEXT, lastName TEXT, phone TEXT)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase MyDB, int i, int i1) {
-        MyDB.execSQL("drop Table if exists users");
+        MyDB.execSQL("DROP TABLE IF EXISTS users");
     }
 
-    public Boolean insertData(String email, String password){
+    public Boolean insertData(String email, String password, String firstName, String lastName, String phone){
         SQLiteDatabase MyDatabase = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("email", email);
         contentValues.put("password", password);
+        contentValues.put("firstName", firstName);
+        contentValues.put("lastName", lastName);
+        contentValues.put("phone", phone);
         long result = MyDatabase.insert("users", null, contentValues);
 
-        if (result == -1) {
-            return false;
-        } else {
-            return true;
-        }
+        return result != -1;
     }
 
     public Boolean checkEmail(String email){
         SQLiteDatabase MyDatabase = this.getWritableDatabase();
-        Cursor cursor = MyDatabase.rawQuery("Select * from users where email = ?", new String[]{email});
+        Cursor cursor = MyDatabase.rawQuery("SELECT * FROM users WHERE email = ?", new String[]{email});
 
-        if(cursor.getCount() > 0) {
-            return true;
-        }else {
-            return false;
-        }
+        return cursor.getCount() > 0;
     }
+
     public Boolean checkEmailPassword(String email, String password){
         SQLiteDatabase MyDatabase = this.getWritableDatabase();
-        Cursor cursor = MyDatabase.rawQuery("Select * from users where email = ? and password = ?", new String[]{email, password});
+        Cursor cursor = MyDatabase.rawQuery("SELECT * FROM users WHERE email = ? AND password = ?", new String[]{email, password});
 
-        if (cursor.getCount() > 0) {
-            return true;
-        }else {
-            return false;
-        }
+        return cursor.getCount() > 0;
     }
 }
