@@ -71,17 +71,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Check if email exists
     public boolean checkEmail(String email) {
         boolean exists = false;
-        Cursor cursor = null;
-        try {
-            cursor = MyDatabase.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE email = ?", new String[]{email});
+        try (Cursor cursor = MyDatabase.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE email = ?", new String[]{email})) {
             exists = cursor.getCount() > 0;
             Log.d("DatabaseHelper", "Email check for " + email + ": " + exists);
         } catch (Exception e) {
             Log.e("DatabaseHelper", "Error checking email: " + e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
         return exists;
     }
