@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,34 +41,52 @@ public class SignupActivity extends AppCompatActivity {
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String firstName = signupFirstName.getText().toString();
-                String lastName = signupLastName.getText().toString();
-                String phone = signupPhone.getText().toString();
-                String email = signupEmail.getText().toString();
-                String password = signupPassword.getText().toString();
-                String confirmPassword = signupConfirm.getText().toString();
+                String firstName = signupFirstName.getText().toString().trim();
+                String lastName = signupLastName.getText().toString().trim();
+                String phone = signupPhone.getText().toString().trim();
+                String email = signupEmail.getText().toString().trim();
+                String password = signupPassword.getText().toString().trim();
+                String confirmPassword = signupConfirm.getText().toString().trim();
+
+                Log.d("SignupActivity", "FirstName: " + firstName);
+                Log.d("SignupActivity", "LastName: " + lastName);
+                Log.d("SignupActivity", "Phone: " + phone);
+                Log.d("SignupActivity", "Email: " + email);
+                Log.d("SignupActivity", "Password: " + password);
+                Log.d("SignupActivity", "Confirm Password: " + confirmPassword);
 
                 if (firstName.isEmpty() || lastName.isEmpty() || phone.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
                     Toast.makeText(SignupActivity.this, "All fields are mandatory", Toast.LENGTH_SHORT).show();
                 } else {
                     if (password.equals(confirmPassword)) {
                         Boolean checkUserEmail = databaseHelper.checkEmail(email);
+                        Log.d("SignupActivity", "Check User Email: " + checkUserEmail);
 
                         if (!checkUserEmail) {
                             Boolean insert = databaseHelper.insertData(email, password, firstName, lastName, phone);
+                            Log.d("SignupActivity", "Insert Data: " + insert);
 
                             if (insert) {
                                 Toast.makeText(SignupActivity.this, "Signup Successfully!", Toast.LENGTH_SHORT).show();
+                                Log.d("SignupActivity", "Signup Successful");
+
+                                // Pass the user data to ProfileActivity
                                 Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                                intent.putExtra("name", firstName + " " + lastName);
+                                intent.putExtra("email", email);
+                                intent.putExtra("phone", phone);
                                 startActivity(intent);
                             } else {
                                 Toast.makeText(SignupActivity.this, "Signup Failed!", Toast.LENGTH_SHORT).show();
+                                Log.d("SignupActivity", "Signup Failed");
                             }
                         } else {
                             Toast.makeText(SignupActivity.this, "User already exists! Please login", Toast.LENGTH_SHORT).show();
+                            Log.d("SignupActivity", "User already exists");
                         }
                     } else {
-                        Toast.makeText(SignupActivity.this, "Invalid Password!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignupActivity.this, "Passwords do not match!", Toast.LENGTH_SHORT).show();
+                        Log.d("SignupActivity", "Passwords do not match");
                     }
                 }
             }
